@@ -1,15 +1,15 @@
 <?php
 session_start();
-if(!isset($_SESSION['username'])){
-	header("Location: index.php");
+if (!isset($_SESSION['username'])) {
+    header('Location: index.php');
 }
-include('libs/db/db.php');
-include('config.php');
-include('functions.php');
+include 'libs/db/db.php';
+include 'config.php';
+include 'functions.php';
 $data = new JSONDatabase($config['db'], $config['db_location']);
 ?>
 <html>
-	<?php include('head.php'); ?>
+	<?php include 'head.php'; ?>
 	<!-- Dashboard show -->
 	<body>
 		<div class="container-fluid">
@@ -19,7 +19,7 @@ $data = new JSONDatabase($config['db'], $config['db_location']);
 			      <a class="navbar-brand" href="aliases.php">Mailbox management</a>
 			    </div>
 			    <ul class="nav navbar-nav">
-			    	<li><a href="#">Welcome, <?php echo $_SESSION['username'];?>!</a></li>
+			    	<li><a href="#">Welcome, <?php echo $_SESSION['username']; ?>!</a></li>
 			    	<li><a href="dashboard.php"><i class="fa fa-person"></i> Addresses</a></li>
 				<li><a class="nav-active" href="aliases.php"><i class="fa fa-person"></i> Aliases</a></li>
 			    	<li><a href="logout.php"><i class="fa fa-person"></i> Logout</a></li>
@@ -30,17 +30,17 @@ $data = new JSONDatabase($config['db'], $config['db_location']);
 		<div class="container">
 			<div class="row">
 				<?php
-				if(isset($_SESSION['msg'])){
-					echo '<div class="alert alert-danger">'.$_SESSION['msg'].'</div>';
-					$_SESSION['msg'] = null;
-					unset($_SESSION['msg']);
-				}
-				if(isset($_SESSION['good'])){
-					echo '<div class="alert alert-success">'.$_SESSION['good'].'</div>';
-					$_SESSION['good'] = null;
-					unset($_SESSION['good']);
-				}
-				?>
+                if (isset($_SESSION['msg'])) {
+                    echo '<div class="alert alert-danger">'.$_SESSION['msg'].'</div>';
+                    $_SESSION['msg'] = null;
+                    unset($_SESSION['msg']);
+                }
+                if (isset($_SESSION['good'])) {
+                    echo '<div class="alert alert-success">'.$_SESSION['good'].'</div>';
+                    $_SESSION['good'] = null;
+                    unset($_SESSION['good']);
+                }
+                ?>
 				<div class="col-md-8">
 					<div class="page-header">
 						<h2>Current Aliases</h2>
@@ -51,31 +51,31 @@ $data = new JSONDatabase($config['db'], $config['db_location']);
 						</thead>
 						<tbody>
 							<?php
-							$aliases = getAliases();
-							foreach($aliases as $alias){
-								$email = $alias['address'];
-								$display = $alias['address_display'];
-								$fwdto = $alias['forwards_to'];
-								echo '<tr><td>'.$email.'</td><td><ul>';
-								foreach($fwdto as $fwd){
-									echo '<li>'.$fwd.'</li>';
-								}
-								echo '</ul></td><td>';
-								if(!$alias['required']){
-									echo '
+                            $aliases = getAliases();
+                            foreach ($aliases as $alias) {
+                                $email = $alias['address'];
+                                $display = $alias['address_display'];
+                                $fwdto = $alias['forwards_to'];
+                                echo '<tr><td>'.$email.'</td><td><ul>';
+                                foreach ($fwdto as $fwd) {
+                                    echo '<li>'.$fwd.'</li>';
+                                }
+                                echo '</ul></td><td>';
+                                if (!$alias['required']) {
+                                    echo '
 								<form action="api.php" method="POST">
 									<input type="hidden" name="t" value="delAlias">
 									<input type="hidden" name="address" value="'.$email.'">
 									<button class="btn btn-danger btn-small" type="submit">Delete Alias</button>
 								</form>
 								';
-								} else {
-									echo 'Cannot delete admin alias.';
-								}
-								
-								echo '</td></tr>';
-							}
-							?>
+                                } else {
+                                    echo 'Cannot delete admin alias.';
+                                }
+
+                                echo '</td></tr>';
+                            }
+                            ?>
 						</tbody>
 					</table>
 				</div>
@@ -87,7 +87,7 @@ $data = new JSONDatabase($config['db'], $config['db_location']);
 						<input type="hidden" name="t" value="newAlias">
 						<p>Alias Name:</p>
 						<div class="input-group">
-	        				<input class="form-control" type="text" name="address" placeholder="Alias (Max 32. Char.)" maxlength="32"><span class="input-group-addon">@<?php echo $_SESSION['domain'];?></span><br>
+	        				<input class="form-control" type="text" name="address" placeholder="Alias (Max 32. Char.)" maxlength="32"><span class="input-group-addon">@<?php echo $_SESSION['domain']; ?></span><br>
 	        			</div><br>
 	        			<p>Forwards To:</p>
 	        			<textarea class="" rows="4" style="width:100%" name="forwards"></textarea><br><br>
@@ -96,7 +96,7 @@ $data = new JSONDatabase($config['db'], $config['db_location']);
 				</div>
 			</div>
 		</div>
-		<?php include('foot.php'); ?>
+		<?php include 'foot.php'; ?>
 	</body>
 	
 </html>

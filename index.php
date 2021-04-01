@@ -1,64 +1,63 @@
 <?php
 session_start();
-include('libs/db/db.php');
-include('config.php');
+include 'libs/db/db.php';
+include 'config.php';
 //die("DISABLED");
 $data = new JSONDatabase($config['db'], $config['db_location']);
-if(isset($_SESSION['username'])){
-	//We are logged in, redirect to dashboard.
-	header("Location: dashboard.php");
-	die();
+if (isset($_SESSION['username'])) {
+    //We are logged in, redirect to dashboard.
+    header('Location: dashboard.php');
+    exit();
 }
-if(isset($_POST['username']) && isset($_POST['t'])){
-	if($_POST['t'] == "login"){
-		//Attempt to login:
-		$user = $data->select("accounts", "username", $_POST['username']);
-		if(count($user) < 1){
-			$_SESSION['msg'] = "The username or password you entered was incorrect, please try again..";
-			header("Location: index.php");
-			die();
-		}
-		$user = reset($user);
-		$pass = $user['password'];
-		if(password_verify($_POST['password'], $pass)){
-			$_SESSION['username'] = $user['username'];
-			$_SESSION['domain'] = $user['domain'];
-			header("Location:dashboard.php");
-			die();
-		} else {
-			//Password was incorrect
-			$_SESSION['msg'] = "The username or password you entered was incorrect, please try again.";
-		}
-	} elseif($config['registration'] == true && $_POST['t'] == "register"){
-		$user = $data->select("accounts", "username", $_POST['username']);
-		if(count($user) < 1){
-			//User not taken, let's create an account.
-			if($_POST['password'] == $_POST['confirm-password']){
-				//Password matches
-				$password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-				$username = substr(clean($_POST['username']),0,12);
-				$domain = clean($_POST['domain']);
-				$userData = array("username"=>"$username","password"=>"$password","domain"=>$domain);
-				if($data->insert("accounts", json_encode($userData))){
-					$_SESSION['good'] = "SUCCESS! You may now login with the username '$username'";
-				} else {
-					$_SESSION['msg'] = "There was an error during registration, please try again later, or contact the site administrator.";
-				}
-			}else{
-				$_SESSION['msg'] = "ERROR! The password you entered did not match, please try again.";
-			}
-		} else {
-			$_SESSION['msg'] = "The username you entered is taken. Please try again.";
-		}
-	}elseif($config['registration'] == false && $_POST['t'] == "register"){
-			$_SESSION['msg'] = "Registration is currently disabled. Please contact the Administrator.";
-	}
-	
+if (isset($_POST['username']) && isset($_POST['t'])) {
+    if ($_POST['t'] == 'login') {
+        //Attempt to login:
+        $user = $data->select('accounts', 'username', $_POST['username']);
+        if (count($user) < 1) {
+            $_SESSION['msg'] = 'The username or password you entered was incorrect, please try again..';
+            header('Location: index.php');
+            exit();
+        }
+        $user = reset($user);
+        $pass = $user['password'];
+        if (password_verify($_POST['password'], $pass)) {
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['domain'] = $user['domain'];
+            header('Location:dashboard.php');
+            exit();
+        } else {
+            //Password was incorrect
+            $_SESSION['msg'] = 'The username or password you entered was incorrect, please try again.';
+        }
+    } elseif ($config['registration'] == true && $_POST['t'] == 'register') {
+        $user = $data->select('accounts', 'username', $_POST['username']);
+        if (count($user) < 1) {
+            //User not taken, let's create an account.
+            if ($_POST['password'] == $_POST['confirm-password']) {
+                //Password matches
+                $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+                $username = substr(clean($_POST['username']), 0, 12);
+                $domain = clean($_POST['domain']);
+                $userData = ['username'=>"$username", 'password'=>"$password", 'domain'=>$domain];
+                if ($data->insert('accounts', json_encode($userData))) {
+                    $_SESSION['good'] = "SUCCESS! You may now login with the username '$username'";
+                } else {
+                    $_SESSION['msg'] = 'There was an error during registration, please try again later, or contact the site administrator.';
+                }
+            } else {
+                $_SESSION['msg'] = 'ERROR! The password you entered did not match, please try again.';
+            }
+        } else {
+            $_SESSION['msg'] = 'The username you entered is taken. Please try again.';
+        }
+    } elseif ($config['registration'] == false && $_POST['t'] == 'register') {
+        $_SESSION['msg'] = 'Registration is currently disabled. Please contact the Administrator.';
+    }
 }
 //Not logged in, let's give them a login page
 ?>
 <html>
-	<?php include('head.php'); ?>
+	<?php include 'head.php'; ?>
 	<body>
 		<div class="container-fluid">
 			<nav class="navbar navbar-inverse">
@@ -93,17 +92,17 @@ if(isset($_POST['username']) && isset($_POST['t'])){
 									<form id="login-form" action="index.php" method="POST" role="form" style="display: block;">
 										<input type="hidden" name="t" value="login">
 										<?php
-										if(isset($_SESSION['msg'])){
-											echo '<div class="alert alert-danger"><strong>ERROR!</strong> '.$_SESSION['msg'].'</div>';
-											$_SESSION['msg'] = null;
-											unset($_SESSION['msg']);
-										}
-										if(isset($_SESSION['good'])){
-											echo '<div class="alert alert-success">'.$_SESSION['good'].'</div>';
-											$_SESSION['good'] = null;
-											unset($_SESSION['good']);
-										}
-										?>
+                                        if (isset($_SESSION['msg'])) {
+                                            echo '<div class="alert alert-danger"><strong>ERROR!</strong> '.$_SESSION['msg'].'</div>';
+                                            $_SESSION['msg'] = null;
+                                            unset($_SESSION['msg']);
+                                        }
+                                        if (isset($_SESSION['good'])) {
+                                            echo '<div class="alert alert-success">'.$_SESSION['good'].'</div>';
+                                            $_SESSION['good'] = null;
+                                            unset($_SESSION['good']);
+                                        }
+                                        ?>
 										<div class="form-group">
 											<input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder=" Username" value="" required>
 										</div>
@@ -128,9 +127,9 @@ if(isset($_POST['username']) && isset($_POST['t'])){
 										</div>-->
 									</form>
 									<?php
-									if($config['registration']){
-										echo ''
-										?>
+                                    if ($config['registration']) {
+                                        echo ''
+                                        ?>
 									<form id="register-form" action="index.php" method="POST" role="form" style="display: none;">
 										<input type="hidden" name="t" value="register">
 										<div class="form-group">
@@ -154,12 +153,12 @@ if(isset($_POST['username']) && isset($_POST['t'])){
 										</div>
 									</form>
 										<?php
-									} else {
-										?>
+                                    } else {
+                                        ?>
 										<div class="text-center">Registration is currently disabled.</div>
 										<?php
-									}
-									?>
+                                    }
+                                    ?>
 									
 								</div>
 							</div>
@@ -170,7 +169,7 @@ if(isset($_POST['username']) && isset($_POST['t'])){
 			</div>
 		</div>
 		</div>
-		<?php include('foot.php'); ?>
+		<?php include 'foot.php'; ?>
 		<script>
 			$(function() {
 
@@ -194,18 +193,22 @@ if(isset($_POST['username']) && isset($_POST['t'])){
 	</body>
 </html>
 <?php
-function clean($string) {
-   $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+function clean($string)
+                                    {
+                                        $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
    $string = preg_replace('/[^A-Za-z0-9\-\.]/', '', $string); // Removes special chars.
+
    return preg_replace('/-+/', '-', $string); // Replaces multiple hyphens with single one.
-}
-function generateRandomString($length = 10) {
+                                    }
+function generateRandomString($length = 10)
+{
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $charactersLength = strlen($characters);
     $randomString = '';
     for ($i = 0; $i < $length; $i++) {
         $randomString .= $characters[rand(0, $charactersLength - 1)];
     }
+
     return $randomString;
 }
 ?>

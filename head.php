@@ -1,5 +1,5 @@
 <?php
-echo "";
+echo '';
 ?>
 <!-- Bootstrap CDN Stuff. -->
 <head>

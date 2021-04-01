@@ -1,5 +1,5 @@
 <?php
-echo "";
+echo '';
 ?>
 <div class="container-fluid">
 	<div class="row">
